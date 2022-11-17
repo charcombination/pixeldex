@@ -1,0 +1,80 @@
+.prefixedButton {
+  height: 55px;
+  width: auto;
+  margin-top: 12px;
+
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+}
+
+.prefixedButton.filled {
+  background-color: #EB3331;
+  border-radius: 10px;
+  border: none;
+}
+
+.prefixedButton.outlined {
+  background-color: transparent;
+  border-radius: 10px;
+  border: 1px solid #EB3331;
+}
+
+.prefixedButton.outlined:hover {
+  border: 1px solid #D82D2D;
+}
+
+.prefixedButton.filled:hover {
+  background-color: #D82D2D;
+}
+
+.prefixedButton.filled .fakeImage {
+  width: 16px;
+  height: 16px;
+  background-color: grey;
+  margin-right: 12px;
+}
+
+.prefixedButton p {
+  font-size: 17px;
+  font-weight: normal;
+  font-family: "Inter", sans-serif;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.prefixedButton.filled p {
+  color: white;
+}
+
+.prefixedButton.outlined p {
+  color: #EB3331;
+}
+
+.prefix {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  left: 12px;
+  top: 0;
+  bottom: 0;
+  width: 24px;
+  height: 24px;
+
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.prefix.filled {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+}
+
+.prefix.outlined {
+  background-color: transparent;
+}

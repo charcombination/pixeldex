@@ -1,0 +1,57 @@
+.arrowButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  height: 55px;
+  width: 100%;
+
+  background-color: #EB3331;
+  border-radius: 10px;
+  border: none;
+
+  cursor: pointer;
+}
+
+.arrowButton:hover {
+  background-color: #D82D2D;
+}
+
+.arrowButton .fakeImage {
+  width: 16px;
+  height: 16px;
+  background-color: grey;
+  margin-right: 12px;
+}
+
+.arrowButton p {
+  color: white;
+  font-size: 17px;
+  font-weight: 600;
+  font-family: "Inter", sans-serif;
+  margin-left: 10px;
+}
+
+.arrowButton input {
+  all: unset;
+  font-size: 16px;
+  color: white;
+  text-align: left;
+  width: 55px;
+}
+
+.arrowButton input::placeHolder {
+  all: unset;
+  font-size: 16px;
+  color: #FF8787;
+  text-align: left;
+}
+
+.disabled {
+  cursor: not-allowed;
+}
+
+.disabled:hover {
+  background-color: #EB3331;
+}

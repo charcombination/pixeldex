@@ -1,0 +1,106 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+
+  background-color: white;
+  border-radius: 14px;
+
+  width: 435px;
+  height: 465px;
+  padding: 30px;
+  padding-top: 34px;
+  padding-bottom: 34px;
+
+  box-shadow: 0px 2px 7px 0px rgba(0,0,0,0.15);
+}
+
+.upperside {
+  flex-grow: 1;
+}
+
+.panel h1 {
+  color: #EB3331;
+  font: "Inter", sans-serif;
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 4px;
+  margin-bottom: 24px;
+}
+
+.requestbox {
+  display: flex;
+  flex-direction: column;
+  background-color: #F5F7FA;
+  border-radius: 7px;
+  height: auto;
+  width: auto;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.description {
+  margin: 0px;
+  font-size: 15px;
+  color: #718096;
+}
+
+.value {
+  font-size: 15px;
+  text-decoration: underline solid #A6AEBC 8%;
+  color: #A6AEBC;
+}
+
+.spacebetween {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.spacebetween a {
+  margin: 0px;
+  font-size: 15px;
+  color: #A6AEBC;
+  text-decoration: underline;
+}
+
+input {
+  all: unset;
+  margin-top: 10px;
+  font-size: 15px;
+  color: #A6AEBC;
+}
+
+input::placeHolder {
+  color: #A6AEBC;
+}
+
+.goback {
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 4px;
+  padding: 8px;
+  overflow: hidden;
+  vertical-align: middle;
+  cursor: pointer;
+  height: 24px;
+  width: 24px;
+  -webkit-user-select: none;
+}
+
+.goback:hover {
+  background-color: rgba(60,64,67,.08);
+  outline: none;
+}
+
+.goback svg {
+  color: #5f6368;
+  opacity: 1;
+  fill: currentColor;
+}
+
+.horizontal {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
