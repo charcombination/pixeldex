@@ -26,6 +26,7 @@ app.add_middleware(
 )
 
 # TODO: Change endpoint
+# TODO: Regenerate output.txt
 @app.get('/list/{steamid}/')
 async def inventory(steamid):
     f = open('./output.txt', 'r')
@@ -41,7 +42,7 @@ def median_price(market_hash_name):
 
 @app.get('/float/{steamid}/{assetid}/')
 def get_item_float(steamid, assetid, url):
-    inspectlink = get_inspectlink(url, assetid, steamid)
+    inspectlink = reformat_inspectlink(url, assetid, steamid)
     csgofloat_url = 'https://api.csgofloat.com/?url={}'.format(inspectlink)
 
     authorization = os.getenv('CSGOFLOAT_API')
@@ -72,51 +73,42 @@ def verify_item(steamid, item_name, float):
     # API should also provide information to uniquely identify the deposit that is being updated
 
     for asset in enriched_inventory:
-        if asset.get('iteminfo').get('float') == float:
+        if asset.get('floatinfo').get('float') == float:
             return True
     return False
 
+# TODO: Verify that get_enriched_inventory_* returns the same data structure for both methods
 
-# These should return values of the same type
-def get_enriched_inventory(steamid_64):
-    inventory = fetch_inventory(steamid_64)
-    item_information = inventory.get('rgInventory')
-    item_descriptions = inventory.get('rgDescriptions')
-
-    # Append description
-    for key in item_information.keys():
-
-        value = item_information.get(key)
-        description = item_descriptions.get(value.get('classid') + '_' + value.get('instanceid'))
-        value['description'] = description
-
-    # TODO: Add float info from filtered inventory, make filtered search based on default search
-
-    return item_information.values()
-
-
-# These should return values of the same type
 def get_enriched_inventory_filtered(steamid_64, filter_name):
+    items = get_unified_inventory(steamid_64)
+    filtered_items = [asset for asset in items.values() if filter_name in asset.get('description').get('market_hash_name')]
+
+    # Add float data
+    floatinfo = get_float_bulk(items, steamid_64)
+    for matched in filtered_items:
+        matched['floatinfo'] = floatinfo.get(match.get('id'))
+
+    return items
+
+def get_enriched_inventory(steamid_64):
+    items = get_unified_inventory(steamid_64)
+    return items.values()
+
+# The json response for the inventory contains two dictionaries that each have information for the assets
+# This function merges both into one datastructure
+def get_unified_inventory(steamid_64):
     inventory = fetch_inventory(steamid_64)
     item_information = inventory.get('rgInventory')
     item_descriptions = inventory.get('rgDescriptions')
 
-    # Append relevant values of rgDescriptions to keys of rgInventory
     for key in item_information.keys():
+
         value = item_information.get(key)
         description = item_descriptions.get(value.get('classid') + '_' + value.get('instanceid'))
         value['description'] = description
 
-    # Filter for item name / TODO: Clarify
-    name_matches = [asset for asset in item_information.values() if filter_name in asset.get('description').get('market_hash_name')]
-
-    # Append item info to items matching the required name (e.g. float)
-    iteminfo = get_iteminfo(name_matches, steamid_64)
-
-    for match in name_matches:
-        match['iteminfo'] = iteminfo.get(match.get('id'))
-
-    return name_matches
+    # Does this change item_information?
+    return item_information
 
 def fetch_inventory(steamid_64):
     url = 'https://steamcommunity.com/profiles/{steamid_64}/inventory/json/{app_id}/{context_id}/'.format(
@@ -128,9 +120,9 @@ def fetch_inventory(steamid_64):
     response = requests.get(url).json()
     return jsons.load(response)
 
-def get_iteminfo(entries, owner_steamid):
+def get_float_bulk(entries, owner_steamid):
     url = 'https://api.csgofloat.com/bulk'
-    json = get_requestjson(entries, owner_steamid)
+    json = reformat_for_bulk_request(entries, owner_steamid)
     authorization = os.getenv('CSGOFLOAT_API')
 
     headers = {
@@ -142,14 +134,14 @@ def get_iteminfo(entries, owner_steamid):
 
     return jsons.load(response)
 
-def get_requestjson(entries, owner_steamid):
-    links = [get_inspectlink_forentry(entry, owner_steamid) for entry in entries]
+def reformat_for_bulk_request(entries, owner_steamid):
+    links = [build_inspectlink(entry, owner_steamid) for entry in entries]
     csgofloat_json = {'links': [{'link': l} for l in links]}
 
     return csgofloat_json
 
 
-def get_inspectlink_forentry(entry, steamid):
+def build_inspectlink(entry, steamid):
     link = entry.get('description').get('actions')[0].get('link')
     link.replace('%owner_steamid%', steamid)
     link.replace('%assetid', entry)
@@ -157,7 +149,7 @@ def get_inspectlink_forentry(entry, steamid):
     return link
 
 
-def get_inspectlink(link, asset_id, steamid):
+def reformat_inspectlink(link, asset_id, steamid):
     link = link.replace('%owner_steamid%', steamid)
     link = link.replace('%assetid%', asset_id)
 
